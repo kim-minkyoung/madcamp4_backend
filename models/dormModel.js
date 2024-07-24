@@ -26,15 +26,31 @@ const getDormById = async (dormId) => {
   };
 };
 
-const updateScore = async (dormId, dormScore) => {
+const updateScore = async (dormId, newScore) => {
   const connection = getConnection();
-  const [rows] = await connection
+
+  // 현재 점수 조회
+  const [currentScoreRows] = await connection
+    .promise()
+    .query("SELECT dorm_score FROM dorms WHERE dorm_id = ?", [dormId]);
+
+  if (currentScoreRows.length === 0) {
+    throw new Error("Dorm not found");
+  }
+
+  const currentScore = currentScoreRows[0].dorm_score || 0;
+
+  // 새로운 점수를 더한 값을 업데이트
+  const updatedScore = currentScore + newScore;
+
+  const [result] = await connection
     .promise()
     .query("UPDATE dorms SET dorm_score = ? WHERE dorm_id = ?", [
-      dormScore,
+      updatedScore,
       dormId,
     ]);
-  return rows[0];
+
+  return result;
 };
 
 module.exports = {
