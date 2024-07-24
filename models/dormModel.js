@@ -14,30 +14,15 @@ const getDormById = async (dormId) => {
   return rows[0];
 };
 
-const createDorm = async (dorm_type, user_id, quidditch_score) => {
-  const connection = getConnection();
-  const [result] = await connection
-    .promise()
-    .query(
-      "INSERT INTO dorms (dorm_type, user_id, quidditch_score) VALUES (?, ?, ?)",
-      [dorm_type, user_id, quidditch_score]
-    );
-  return result.insertId;
-};
-
-const updateDorm = async (dormId, dorm_type, user_id, quidditch_score) => {
-  const connection = getConnection();
-  await connection
-    .promise()
-    .query(
-      "UPDATE dorms SET dorm_type = ?, user_id = ?, quidditch_score = ? WHERE dorm_id = ?",
-      [dorm_type, user_id, quidditch_score, dormId]
-    );
+const updateScore = async (dormId, dormScore) => {
+  await pool.query("UPDATE dorms SET dorm_score = ? WHERE dorm_id = ?", [
+    dormScore,
+    dormId,
+  ]);
 };
 
 module.exports = {
   getAllDorms,
   getDormById,
-  createDorm,
-  updateDorm,
+  updateScore,
 };

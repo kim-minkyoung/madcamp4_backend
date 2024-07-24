@@ -22,21 +22,13 @@ const getDormById = async (req, res) => {
   }
 };
 
-const updateDorm = async (req, res) => {
+const updateScore = async (req, res) => {
   try {
-    const { dorm_type, user_id, quidditch_score } = req.body;
+    const { dormScore } = req.body;
     const dormId = req.params.dormId;
-    if (dormId) {
-      await dormModel.updateDorm(dormId, dorm_type, user_id, quidditch_score);
-      res.status(200).send();
-    } else {
-      const newDormId = await dormModel.createDorm(
-        dorm_type,
-        user_id,
-        quidditch_score
-      );
-      res.status(201).json({ dormId: newDormId });
-    }
+
+    await dormModel.updateScore(dormId, dormScore);
+    res.status(200).send("Dorm updated successfully");
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -45,5 +37,5 @@ const updateDorm = async (req, res) => {
 module.exports = {
   getAllDorms,
   getDormById,
-  updateDorm,
+  updateScore,
 };

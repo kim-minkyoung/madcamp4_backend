@@ -1,3 +1,4 @@
+// /config/db.js
 const mysql = require("mysql2");
 const { Client } = require("ssh2");
 const fs = require("fs");
@@ -25,8 +26,7 @@ const forwardConfig = {
 };
 
 let connection;
-
-const sshClient = new Client();
+let sshClient = new Client();
 
 const connectToDatabase = (callback) => {
   sshClient
@@ -66,6 +66,30 @@ const connectToDatabase = (callback) => {
     .connect(tunnelConfig);
 };
 
+const disconnectFromDatabase = async () => {
+  if (connection) {
+    await new Promise((resolve, reject) => {
+      connection.end((err) => {
+        if (err) {
+          console.error("MySQL 연결 종료 실패: " + err.stack);
+          reject(err);
+        } else {
+          console.log("MySQL 연결 종료됨");
+          resolve();
+        }
+      });
+    });
+  }
+
+  if (sshClient) {
+    return new Promise((resolve) => {
+      sshClient.end();
+      console.log("SSH 연결 종료됨");
+      resolve();
+    });
+  }
+};
+
 const getConnection = () => connection;
 
-module.exports = { connectToDatabase, getConnection };
+module.exports = { connectToDatabase, getConnection, disconnectFromDatabase };

@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const port = 8080;
 
-const { connectToDatabase } = require("./config/db");
+const { connectToDatabase, disconnectFromDatabase } = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const dormRoutes = require("./routes/dormRoutes");
 // const potionRoutes = require("./routes/potionRoutes");
@@ -20,3 +20,11 @@ connectToDatabase(() => {
     console.log(`Server running on port ${port}`);
   });
 });
+
+const gracefulShutdown = async () => {
+  await disconnectFromDatabase();
+  process.exit(0); // Ensure process exits after cleanup
+};
+
+process.on("SIGTERM", gracefulShutdown);
+process.on("SIGINT", gracefulShutdown);
