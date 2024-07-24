@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.IO Test</title>
+    <script src="http://localhost:8080/socket.io/socket.io.js"></script>
+    <style>
+      #player {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background-color: red;
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Socket.IO Test</h1>
+    <div id="player"></div>
+    <script>
+      // Ensure the script runs after the socket.io library is loaded
+      const socket = io("http://localhost:8080");
+
+      // Reference to the player element
+      const player = document.getElementById("player");
+
+      // Handle connection event
+      socket.on("connect", () => {
+        console.log("Connected to server");
+      });
+
+      // Handle current players event
+      socket.on("currentPlayers", (players) => {
+        console.log("Current players:", players);
+      });
+
+      // Handle new player event
+      socket.on("newPlayer", (data) => {
+        console.log("New player joined:", data);
+      });
+
+      // Handle player movement event
+      socket.on("playerMoved", (data) => {
+        console.log("Player moved:", data);
+        if (data.playerId === socket.id) {
+          // Update the player's position on the screen
+          player.style.top = data.position.top;
+          player.style.left = data.position.left;
+        }
+      });
+
+      // Handle player disconnected event
+      socket.on("playerDisconnected", (playerId) => {
+        console.log("Player disconnected:", playerId);
+      });
+
+      // Simulate player movement (you can replace this with actual movement logic)
+      setInterval(() => {
+        const newPosition = {
+          top: `${Math.random() * 100}%`,
+          left: `${Math.random() * 100}%`,
+        };
+        player.style.top = newPosition.top;
+        player.style.left = newPosition.left;
+        socket.emit("playerMovement", { position: newPosition });
+      }, 2000); // Update position every 2 seconds
+    </script>
+  </body>
+</html>
