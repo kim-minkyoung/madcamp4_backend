@@ -14,13 +14,13 @@ const getUserById = async (userId) => {
   return rows[0];
 };
 
-const createUser = async (userName, userPassword, userDorm) => {
+const createUser = async (userName, hashedPassword, userDorm) => {
   const connection = getConnection();
   const [rows] = await connection
     .promise()
     .query(
       "INSERT INTO users (user_name, user_password, dorm_id) VALUES (?, ?, ?)",
-      [userName, userPassword, userDorm]
+      [userName, hashedPassword, userDorm]
     );
   return rows[0];
 };
