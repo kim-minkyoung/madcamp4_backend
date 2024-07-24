@@ -15,10 +15,14 @@ const getDormById = async (dormId) => {
 };
 
 const updateScore = async (dormId, dormScore) => {
-  await pool.query("UPDATE dorms SET dorm_score = ? WHERE dorm_id = ?", [
-    dormScore,
-    dormId,
-  ]);
+  const connection = getConnection();
+  const [rows] = await connection
+    .promise()
+    .query("UPDATE dorms SET dorm_score = ? WHERE dorm_id = ?", [
+      dormScore,
+      dormId,
+    ]);
+  return rows[0];
 };
 
 module.exports = {
