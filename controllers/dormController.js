@@ -9,17 +9,24 @@ const getAllDorms = async (req, res) => {
   }
 };
 
-const getDormById = async (req, res) => {
-  try {
-    const dorm = await dormModel.getDormById(req.params.dormId);
-    if (dorm) {
-      res.json(dorm);
-    } else {
-      res.status(404).send("Dorm not found");
-    }
-  } catch (error) {
-    res.status(500).send(error.message);
+const getDormById = async (dormId) => {
+  const connection = getConnection();
+  const [dormRows] = await connection
+    .promise()
+    .query("SELECT * FROM dorms WHERE dorm_id = ?", [dormId]);
+
+  if (dormRows.length === 0) {
+    return null;
   }
+
+  const [userRows] = await connection
+    .promise()
+    .query("SELECT user_name FROM users WHERE dorm_id = ?", [dormId]);
+
+  return {
+    ...dormRows[0],
+    students: userRows.map((row) => row.user_name),
+  };
 };
 
 const updateScore = async (req, res) => {
