@@ -25,17 +25,8 @@ const getUserById = async (req, res) => {
 const createUser = async (req, res) => {
   try {
     const { user_name, user_dorm } = req.body;
-    const userId = await userModel.createUser(user_name, user_dorm);
-    res.status(201).json({ userId });
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-};
-
-const deleteUser = async (req, res) => {
-  try {
-    await userModel.deleteUser(req.params.userId);
-    res.status(204).send();
+    const user = await userModel.createUser(user_name, user_dorm);
+    res.status(201).json({ user });
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -45,5 +36,4 @@ module.exports = {
   getAllUsers,
   getUserById,
   createUser,
-  deleteUser,
 };
