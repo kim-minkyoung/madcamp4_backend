@@ -8,10 +8,22 @@ const getAllDorms = async () => {
 
 const getDormById = async (dormId) => {
   const connection = getConnection();
-  const [rows] = await connection
+  const [dormRows] = await connection
     .promise()
     .query("SELECT * FROM dorms WHERE dorm_id = ?", [dormId]);
-  return rows[0];
+
+  if (dormRows.length === 0) {
+    return null;
+  }
+
+  const [userRows] = await connection
+    .promise()
+    .query("SELECT user_name FROM users WHERE dorm_id = ?", [dormId]);
+
+  return {
+    ...dormRows[0],
+    students: userRows.map((row) => row.user_name),
+  };
 };
 
 const updateScore = async (dormId, dormScore) => {
