@@ -24,8 +24,8 @@ const getUserById = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const { user_name, user_dorm } = req.body;
-    const user = await userModel.createUser(user_name, user_dorm);
+    const { userName, userPassword, userDorm } = req.body;
+    const user = await userModel.createUser(userName, userPassword, userDorm);
     res.status(201).json({ user });
   } catch (error) {
     res.status(500).send(error.message);
