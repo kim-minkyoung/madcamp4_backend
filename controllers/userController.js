@@ -1,4 +1,5 @@
 const userModel = require("../models/userModel");
+const bcrypt = require("bcrypt");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -25,7 +26,8 @@ const getUserById = async (req, res) => {
 const createUser = async (req, res) => {
   try {
     const { userName, userPassword, userDorm } = req.body;
-    const user = await userModel.createUser(userName, userPassword, userDorm);
+    const hashedPassword = await bcrypt.hash(userPassword, 10);
+    const user = await userModel.createUser(userName, hashedPassword, userDorm);
     res.status(201).json({ user });
   } catch (error) {
     res.status(500).send(error.message);
