@@ -24,11 +24,18 @@ const getDormById = async (req, res) => {
 
 const updateScore = async (req, res) => {
   try {
-    const { dormScore } = req.body;
+    const { dormScore, operation } = req.body;
     const dormId = req.params.dormId;
 
-    await dormModel.updateScore(dormId, dormScore);
-    res.status(200).send("Dorm updated successfully");
+    if (operation === "add") {
+      await dormModel.addScore(dormId, dormScore);
+      res.status(200).send("Dorm score updated successfully");
+    } else if (operation === "multiply") {
+      await dormModel.multiplyScore(dormId, dormScore);
+      res.status(200).send("Dorm score multiplied successfully");
+    } else {
+      res.status(400).send("Invalid operation");
+    }
   } catch (error) {
     res.status(500).send(error.message);
   }

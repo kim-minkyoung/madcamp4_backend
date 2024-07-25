@@ -26,10 +26,8 @@ const getDormById = async (dormId) => {
   };
 };
 
-const updateScore = async (dormId, newScore) => {
+const addScore = async (dormId, newScore) => {
   const connection = getConnection();
-
-  // 현재 점수 조회
   const [currentScoreRows] = await connection
     .promise()
     .query("SELECT dorm_score FROM dorms WHERE dorm_id = ?", [dormId]);
@@ -39,9 +37,30 @@ const updateScore = async (dormId, newScore) => {
   }
 
   const currentScore = currentScoreRows[0].dorm_score || 0;
-
-  // 새로운 점수를 더한 값을 업데이트
   const updatedScore = currentScore + newScore;
+
+  const [result] = await connection
+    .promise()
+    .query("UPDATE dorms SET dorm_score = ? WHERE dorm_id = ?", [
+      updatedScore,
+      dormId,
+    ]);
+
+  return result;
+};
+
+const multiplyScore = async (dormId, factor) => {
+  const connection = getConnection();
+  const [currentScoreRows] = await connection
+    .promise()
+    .query("SELECT dorm_score FROM dorms WHERE dorm_id = ?", [dormId]);
+
+  if (currentScoreRows.length === 0) {
+    throw new Error("Dorm not found");
+  }
+
+  const currentScore = currentScoreRows[0].dorm_score || 0;
+  const updatedScore = currentScore * factor;
 
   const [result] = await connection
     .promise()
@@ -56,5 +75,6 @@ const updateScore = async (dormId, newScore) => {
 module.exports = {
   getAllDorms,
   getDormById,
-  updateScore,
+  addScore,
+  multiplyScore,
 };
