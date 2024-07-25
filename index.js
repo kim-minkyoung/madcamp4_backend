@@ -18,7 +18,7 @@ app.use("/api", dormRoutes);
 app.use("/api", potionRoutes);
 
 const server = http.createServer(app);
-require("./socket")(server);
+// require("./socket")(server);
 
 connectToDatabase(() => {
   server.listen(port, () => {
